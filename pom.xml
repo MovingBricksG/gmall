@@ -12,6 +12,7 @@
         <module>gmall_0513_common</module>
         <module>gmall_0513_mock</module>
         <module>dw-logger</module>
+        <module>dw-realtime</module>
     </modules>
 
     <parent>
