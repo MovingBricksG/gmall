@@ -7,10 +7,12 @@ import com.alibaba.fastjson.JSON
 import com.atguigu.constant.GmallConstants
 import com.atguigu.gmall0513.realtime.bean.StartUpLog
 import com.atguigu.gmall0513.realtime.util.{MyKafkaUtil, RedisUtil}
+import org.apache.hadoop.conf.Configuration
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.spark.SparkConf
 import org.apache.spark.streaming.dstream.{DStream, InputDStream}
 import org.apache.spark.streaming.{Seconds, StreamingContext}
+import org.apache.phoenix.spark._
 
 object DauApp {
 
@@ -36,6 +38,8 @@ object DauApp {
             startUpLog
         }
         }
+
+        startupMapStream.cache()
 
         // 进行过滤
         // 使用广播变量
@@ -87,6 +91,13 @@ object DauApp {
                 jedisClient.close()
             })*/
         }
+
+        // 最后将过滤后的数据存入到hbase中
+        uniqueStream.foreachRDD{rdd =>{
+            rdd.saveToPhoenix("GMALL2019_DAU",
+                Seq("MID", "UID", "APPID", "AREA", "OS", "CH", "TYPE", "VS", "LOGDATE", "LOGHOUR", "TS"),
+                new Configuration(), Some("gch102,gch103,gch104:2181"))
+        }}
 
         ssc.start()
         ssc.awaitTermination()
