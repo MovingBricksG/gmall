@@ -26,6 +26,8 @@ public class CanalHandler {
             sendRowDataToKafka(GmallConstants.KAFKA_TOPIC_ORDER);
         } else if (tableName.equals("user_info") && eventType == CanalEntry.EventType.INSERT) {
             sendRowDataToKafka(GmallConstants.KAFKA_TOPIC_USER);
+        } else if (tableName.equals("order_detail") && eventType == CanalEntry.EventType.INSERT) {
+            sendRowDataToKafka(GmallConstants.KAFKA_TOPIC_ORDER_DETAIL);
         }
     }
 
@@ -40,6 +42,11 @@ public class CanalHandler {
                 jsonObject.put(name, value);
             }
             String rowJson = jsonObject.toJSONString();
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             MyKafkaSender.send(topic, rowJson);
         }
     }

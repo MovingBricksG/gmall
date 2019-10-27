@@ -12,12 +12,12 @@ public class MyKafkaSender {
     public static void send(String topic, String msg) {
 
         if (kafkaProducer == null) {
-            kafkaProducer = creatKafkaProducer();
+            kafkaProducer = createKafkaProducer();
         }
-        kafkaProducer.send(new ProducerRecord<String, String>(topic, msg));
+        kafkaProducer.send(new ProducerRecord<>(topic, msg));
     }
 
-    private static KafkaProducer<String, String> creatKafkaProducer() {
+    private static KafkaProducer<String, String> createKafkaProducer() {
 
         Properties properties = new Properties();
         properties.put("bootstrap.servers", "gch102:9092,gch103:9092,gch104:9092");
